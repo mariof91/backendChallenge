@@ -1,6 +1,7 @@
 package unmarshaller
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 
@@ -51,3 +52,37 @@ func (PersonUnmarshallerImpl) Unmarshal(str string) ([]model.Person, error) {
 
 	return people, nil
 }
+
+type PersonUnmarshaller2Impl struct{
+}
+
+func NewPersonUnmarshaller2Impl() *PersonUnmarshaller2Impl {
+	return &PersonUnmarshaller2Impl{}
+}
+
+/*
+if the JSON received has the following format:
+
+{
+	"data": [{
+		"key": "IAfpK",
+		"age": 58
+	}, {
+		"key": "WNVdi",
+		"age": 64
+	}]
+}
+
+you should use this marshaller
+*/
+func (p PersonUnmarshaller2Impl) Unmarshal(str string) ([]model.Person, error) {
+	people := map[string][]model.Person{}
+
+	err:= json.Unmarshal([]byte(str), &people)
+	if err != nil {
+		return nil, err
+	}
+
+	return people["data"], nil
+}
+
